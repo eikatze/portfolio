@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html class="dark" lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>진영 포트폴리오</title>
+  <meta id="site-desc" name="description" content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-lowest": "#100e06",
+            "on-secondary": "#393000",
+            "error": "#ffb4ab",
+            "error-container": "#93000a",
+            "on-error": "#690005",
+            "surface-container-low": "#1e1c12",
+            "tertiary-container": "#3bf7ff",
+            "on-tertiary": "#003739",
+            "primary-fixed": "#ffe24c",
+            "surface-bright": "#3c392e",
+            "primary-fixed-dim": "#e2c62d",
+            "on-tertiary-fixed": "#002021",
+            "surface-container-highest": "#38352a",
+            "outline-variant": "#4b4734",
+            "surface": "#16130a",
+            "secondary-fixed": "#f3e39d",
+            "on-secondary-fixed": "#211b00",
+            "surface-container": "#222016",
+            "on-surface": "#e9e2d2",
+            "surface-tint": "#e2c62d",
+            "outline": "#97917a",
+            "tertiary": "#f4ffff",
+            "inverse-on-surface": "#333026",
+            "secondary-container": "#514710",
+            "primary-container": "#fde047",
+            "on-primary-fixed": "#211b00",
+            "on-primary": "#393000",
+            "on-tertiary-fixed-variant": "#004f52",
+            "surface-container-high": "#2d2a1f",
+            "primary": "#fffcff",
+            "on-tertiary-container": "#006e72",
+            "background": "#16130a",
+            "surface-dim": "#16130a",
+            "on-error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#524600",
+            "on-background": "#e9e2d2",
+            "on-surface-variant": "#cec6ad",
+            "secondary-fixed-dim": "#d6c784",
+            "on-secondary-fixed-variant": "#514710",
+            "on-secondary-container": "#c4b574",
+            "tertiary-fixed": "#59f8ff",
+            "secondary": "#d6c784",
+            "inverse-primary": "#6d5e00",
+            "inverse-surface": "#e9e2d2",
+            "surface-variant": "#38352a",
+            "on-primary-container": "#726300",
+            "tertiary-fixed-dim": "#00dce4"
+          },
+          borderRadius: {
+            DEFAULT: "0.125rem",
+            lg: "0.25rem",
+            xl: "0.5rem",
+            full: "0.75rem"
+          },
+          fontFamily: {
+            headline: ["Epilogue"],
+            body: ["Epilogue"],
+            label: ["Epilogue"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+      background: #16130a;
+    }
+    body {
+      font-family: 'Epilogue', sans-serif;
+      background-color: #16130a;
+      color: #e9e2d2;
+    }
+    [hidden] {
+      display: none !important;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    section[id] {
+      scroll-margin-top: 112px;
+    }
+    .hero-video-container {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(22, 19, 10, 0.32), rgba(22, 19, 10, 0.72), rgba(22, 19, 10, 0.98));
+      z-index: 1;
+    }
+    .text-shadow-lg {
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    .project-grid,
+    .plans-grid,
+    .stats-grid,
+    .works-grid,
+    .process-grid,
+    .contact-details-grid,
+    .footer-links {
+      display: grid;
+      gap: 1.5rem;
+    }
+    .plans-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .works-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .process-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .contact-details-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .footer-links {
+      grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+      justify-content: center;
+    }
+    .project-card {
+      min-width: 0;
+      transition: border-color .3s ease, transform .3s ease, color .3s ease;
+    }
+    .project-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(253, 224, 71, 0.5);
+    }
+    .project-card[data-layout="featured"] {
+      border-left-width: 1px;
+      padding-left: 2rem;
+    }
+    .project-card[data-layout="secondary"] {
+      border-left-width: 1px;
+      padding-left: 2rem;
+    }
+    .project-card[data-layout="small"] {
+      border-top-width: 1px;
+      padding-top: 2rem;
+    }
+    .project-title:hover,
+    .project-card:hover .project-title {
+      color: #fde047;
+    }
+    .works-filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .works-filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .works-filter-divider {
+      width: 1px;
+      align-self: stretch;
+      background: rgba(75, 71, 52, 0.6);
+    }
+    .works-filter-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.5rem;
+      border: 1px solid rgba(75, 71, 52, 0.8);
+      border-radius: 9999px;
+      background: rgba(56, 53, 42, 0.28);
+      color: #cec6ad;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.625rem 1rem;
+      transition: border-color .25s ease, background .25s ease, color .25s ease, transform .25s ease;
+    }
+    .works-filter-button:hover,
+    .works-filter-button.is-active {
+      border-color: rgba(253, 224, 71, 0.5);
+      background: rgba(253, 224, 71, 0.12);
+      color: #fde047;
+    }
+    .works-filter-button:hover {
+      transform: translateY(-1px);
+    }
+    .works-card {
+      overflow: hidden;
+      border: 1px solid rgba(75, 71, 52, 0.8);
+      border-radius: 1rem;
+      background: rgba(30, 28, 18, 0.96);
+      transition: border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+    }
+    .works-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(253, 224, 71, 0.5);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+    }
+    .works-thumb {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #2d2a1f;
+    }
+    .works-thumb img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .works-card:hover .works-thumb img {
+      transform: scale(1.04);
+    }
+    .works-type-badge {
+      position: absolute;
+      top: 0.875rem;
+      right: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 9999px;
+      background: rgba(22, 19, 10, 0.82);
+      backdrop-filter: blur(12px);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.7rem;
+    }
+    .works-type-badge[data-type="long"] {
+      border-color: rgba(253, 224, 71, 0.28);
+      color: #fde047;
+    }
+    .works-type-badge[data-type="short"] {
+      border-color: rgba(59, 247, 255, 0.22);
+      color: #8ffcff;
+    }
+    .works-card-body {
+      display: grid;
+      gap: 0.75rem;
+      padding: 1.25rem;
+    }
+    .works-card-title {
+      font-size: 1.375rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      transition: color .3s ease;
+    }
+    .works-card:hover .works-card-title {
+      color: #fde047;
+    }
+    .works-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      color: #97917a;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .works-empty {
+      border: 1px dashed rgba(75, 71, 52, 0.9);
+      border-radius: 1rem;
+      background: rgba(34, 32, 22, 0.72);
+      color: #cec6ad;
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+    .plan-card,
+    .contact-primary-card {
+      backdrop-filter: blur(20px);
+    }
+    .plan-card.highlighted {
+      border-top-width: 4px;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.28);
+    }
+    .stat-divider {
+      border-top: 1px solid rgba(75, 71, 52, 0.15);
+    }
+    .free-content-copy {
+      white-space: pre-line;
+    }
+    .mobile-nav-panel {
+      background: rgba(22, 19, 10, 0.96);
+    }
+    .desktop-nav-links {
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    .desktop-nav-link {
+      position: relative;
+      padding-bottom: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #cec6ad;
+      transition: color .3s ease, opacity .3s ease;
+      white-space: nowrap;
+    }
+    .desktop-nav-link:hover,
+    .desktop-nav-link.is-active {
+      color: #FDE047;
+    }
+    .desktop-nav-indicator {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 9999px;
+      background: #FDE047;
+      box-shadow: 0 0 18px rgba(253, 224, 71, 0.24);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(0);
+      transition: transform .28s ease, width .28s ease, opacity .2s ease;
+      will-change: transform, width;
+    }
+    .site-shell {
+      position: relative;
+      z-index: 2;
+    }
+    @media (max-width: 767px) {
+      .hero-video-container {
+        min-height: auto;
+      }
+      .works-filter-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .works-filter-group {
+        width: 100%;
+      }
+      .works-filter-button {
+        flex: 1 1 auto;
+      }
+      .works-filter-divider {
+        display: none;
+      }
+      .project-card[data-layout="featured"],
+      .project-card[data-layout="secondary"] {
+        padding-left: 0;
+        border-left-width: 0;
+        border-top-width: 1px;
+        padding-top: 2rem;
+      }
+      .project-card[data-layout="featured"] {
+        border-top-width: 0;
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+  <header class="fixed inset-x-0 top-0 z-50 bg-[#16130a]/40 backdrop-blur-xl">
+    <nav class="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 py-4 md:px-8 md:py-6">
+      <a id="brand-link" href="index.html" class="text-2xl font-black uppercase tracking-tighter text-white">
+        <span id="brand-prefix" style="letter-spacing:-1.2px;">studio</span>
+        <span id="brand-name" style="letter-spacing:-1.2px;">jinyeong</span>
+      </a>
+      <div id="nav-links" class="desktop-nav-links hidden items-center gap-8 md:flex"></div>
+      <div class="flex items-center gap-3">
+        <button id="menu-toggle" type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#FDE047] md:hidden" aria-expanded="false" aria-controls="mobile-nav" aria-label="메뉴 열기">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <a id="nav-cta" href="contact.html" class="rounded-lg bg-primary-container px-5 py-2.5 text-sm font-bold text-on-primary transition-transform active:scale-95 md:px-6">문의하기</a>
+      </div>
+    </nav>
+    <div id="mobile-nav" class="mobile-nav-panel border-t border-white/10 md:hidden" hidden>
+      <div class="mx-auto flex max-w-screen-2xl flex-col gap-3 px-6 py-6">
+        <div id="mobile-nav-links" class="flex flex-col gap-2"></div>
+        <a id="mobile-nav-cta" href="contact.html" class="mt-2 inline-flex justify-center rounded-lg bg-primary-container px-6 py-3 text-sm font-bold text-on-primary">문의하기</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="site-main">
+    <section id="home" class="hero-video-container">
+      <video id="hero-video" class="hero-video" autoplay loop muted playsinline>
+        <source id="hero-video-source" src="" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="site-shell mx-auto flex h-full max-w-screen-2xl items-start px-6 pt-36 pb-20 md:px-8 md:pt-48">
+        <div class="flex w-full flex-col gap-12 md:flex-row md:justify-between md:gap-16">
+          <div class="max-w-4xl">
+            <span id="hero-eyebrow" class="mb-5 block text-xs font-bold uppercase tracking-[0.3em] text-primary-container"></span>
+            <h1 id="hero-title" class="text-shadow-lg text-5xl font-black leading-[0.95] text-white md:text-7xl lg:text-8xl"></h1>
+            <p id="hero-description" class="mt-8 max-w-2xl rounded-xl border border-white/10 bg-surface/20 p-4 text-base font-medium leading-relaxed text-on-surface-variant backdrop-blur-sm md:text-lg"></p>
+            <div id="hero-actions" class="mt-8 flex flex-wrap gap-4"></div>
+          </div>
+          <div id="hero-status" class="hidden lg:block">
+            <div class="flex flex-col items-end gap-2 text-right">
+              <span id="hero-status-label" class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant"></span>
+              <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-tertiary-container animate-pulse"></span>
+                <span id="hero-status-text" class="text-shadow-lg text-xs font-bold text-on-surface"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="bg-surface px-6 py-24 md:px-8">
+      <div class="mx-auto max-w-screen-2xl">
+        <div class="mb-20 flex flex-col gap-6 border-b border-outline-variant/20 pb-12 md:flex-row md:items-end md:justify-between">
+          <div>
+            <span id="projects-eyebrow" class="mb-4 block text-xs uppercase tracking-[0.2em] text-primary-container"></span>
+            <h2 id="projects-title" class="text-4xl font-bold tracking-tighter md:text-6xl"></h2>
+          </div>
+          <div id="projects-meta" class="text-xs uppercase tracking-[0.2em] text-on-surface-variant"></div>
+        </div>
+        <div id="projects-grid" class="project-grid grid-cols-1 md:grid md:grid-cols-12 md:gap-x-8 md:gap-y-16"></div>
+      </div>
+    </section>
+
+    <section id="stats" class="px-6 py-24 md:px-8 md:py-32">
+      <div class="mx-auto max-w-screen-2xl stat-divider pt-16 md:pt-20">
+        <div id="stats-grid" class="stats-grid"></div>
+      </div>
+    </section>
+
+    <section id="works" class="bg-surface px-6 pb-24 md:px-8 md:pb-32" hidden>
+      <div class="mx-auto max-w-screen-2xl border-t border-outline-variant/20 pt-16 md:pt-20">
+        <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <span class="mb-4 block text-xs uppercase tracking-[0.2em] text-primary-container">Video Portfolio</span>
+            <h2 id="works-title" class="text-4xl font-bold tracking-tighter text-white md:text-6xl"></h2>
+          </div>
+          <p id="works-description" class="max-w-2xl text-sm leading-relaxed text-on-surface-variant md:text-base"></p>
+        </div>
+        <div id="works-filters" class="works-filter-toolbar mb-10" hidden></div>
+        <div id="works-grid" class="works-grid"></div>
+        <div id="works-empty" class="works-empty mt-6" hidden></div>
+      </div>
+    </section>
+
+    <section id="free-content" class="px-6 pb-10 md:px-8" hidden>
+      <div class="mx-auto max-w-4xl rounded-2xl border border-outline-variant/40 bg-surface-container-low p-8 text-center">
+        <p id="free-content-copy" class="free-content-copy text-base leading-relaxed text-on-surface-variant md:text-lg"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="w-full px-6 py-16 md:px-8 md:py-24">
+    <div class="mx-auto flex max-w-screen-2xl flex-col items-center gap-10 border-t border-outline-variant/20 pt-12 text-center">
+      <div id="footer-title" class="text-3xl font-black uppercase tracking-tighter text-white md:text-4xl"></div>
+      <div id="footer-links" class="footer-links"></div>
+      <div id="footer-copy" class="text-[0.6875rem] uppercase tracking-[0.15em] text-outline opacity-60"></div>
+    </div>
+  </footer>
+
+  <script src="script.js?v=20260421-2"></script>
+</body>
+</html>

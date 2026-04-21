@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 페이지 | 진영 포트폴리오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      },
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="stylesheet" href="admin.css?v=20260421-3">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" aria-label="편집 메뉴">
+      <div class="sidebar-brand">
+        <span class="sidebar-kicker">JINYEONG ADMIN</span>
+        <strong>site.json</strong>
+        <p>공개 페이지의 모든 텍스트와 링크를 JSON으로 관리합니다. 수정 후 복사해서 <code>data/site.json</code>에 반영하세요.</p>
+      </div>
+
+      <nav class="admin-tabs" aria-label="편집 메뉴">
+        <button class="tab-button on" type="button" data-tab="works" aria-current="page">영상 포트폴리오</button>
+        <button class="tab-button" type="button" data-tab="projects">프로젝트</button>
+        <button class="tab-button" type="button" data-tab="brand">브랜드 / 내비</button>
+        <button class="tab-button" type="button" data-tab="hero">히어로</button>
+        <button class="tab-button" type="button" data-tab="stats-process">통계 / 프로세스</button>
+        <button class="tab-button" type="button" data-tab="pricing">가격 / 커스텀</button>
+        <button class="tab-button" type="button" data-tab="contact-footer">문의 / 푸터</button>
+        <button class="tab-button" type="button" data-tab="json">JSON 확인</button>
+      </nav>
+    </aside>
+
+    <div class="admin-shell">
+      <header class="admin-hero">
+        <div class="hero-copy">
+          <p class="admin-badge">관리자 페이지</p>
+          <h1>진영 포트폴리오 관리자</h1>
+          <p class="admin-intro">
+            원페이지 사이트에 노출되는 브랜드, 히어로, 프로젝트, 가격, 문의 섹션을 모두 이곳에서 조정할 수 있습니다.
+            복사 후 새 레포의 <code>data/site.json</code>에 붙여 넣는 흐름은 만월 관리자와 동일하게 유지됩니다.
+          </p>
+        </div>
+      </header>
+
+      <div id="editor-status" class="status info" aria-live="polite">site.json을 불러오는 중입니다...</div>
+
+      <section class="summary-grid" aria-label="콘텐츠 요약">
+        <article class="summary-card">
+          <span class="summary-label">내비 링크</span>
+          <strong id="summary-nav-links">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">프로젝트 카드</span>
+          <strong id="summary-projects">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">영상 포트폴리오</span>
+          <strong id="summary-works">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">가격 플랜</span>
+          <strong id="summary-plans">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">프로세스 단계</span>
+          <strong id="summary-steps">0</strong>
+        </article>
+        <article class="summary-card wide">
+          <span class="summary-label">푸터 링크 / GitHub Repo</span>
+          <strong id="summary-footer">0 / -</strong>
+        </article>
+      </section>
+
+      <section id="live-preview-card" class="editor-card live-preview-card" aria-label="실시간 사이트 미리보기" hidden>
+        <div class="live-preview-head">
+          <div>
+            <span class="preview-kicker">LIVE PREVIEW</span>
+            <h3 id="live-preview-title">실시간 간이 페이지</h3>
+            <p id="live-preview-description">현재 탭에 연결된 실제 공개 섹션의 디자인 변화를 바로 확인할 수 있습니다.</p>
+          </div>
+          <div class="preview-meta">
+            <span class="preview-meta-label">현재 미리보기 대상</span>
+            <strong id="live-preview-path">index.html</strong>
+            <a id="preview-open-page" class="preview-open-link" href="../index.html" target="_blank" rel="noopener">실제 페이지 새 탭으로 열기</a>
+          </div>
+        </div>
+
+        <div class="live-preview-stage">
+          <div id="live-preview-surface" class="live-preview-surface"></div>
+        </div>
+
+        <p class="preview-footnote">입력값 수정, 항목 추가/삭제, JSON 원문 편집이 새로고침 없이 바로 반영됩니다.</p>
+      </section>
+
+      <main>
+        <section class="tab-panel" id="panel-brand" data-panel="brand">
+          <div class="panel-head">
+            <div>
+              <h2>브랜드 / 내비</h2>
+              <p>페이지 제목, 설명, GitHub 대상 레포, 브랜드명, 상단 내비게이션을 설정합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <h3>사이트 정보</h3>
+            <div class="form-grid">
+              <label class="field" for="site-title"><span>사이트 제목</span><input id="site-title" type="text"></label>
+              <label class="field" for="site-description"><span>설명</span><input id="site-description" type="text"></label>
+              <label class="field span-2" for="site-github-repo"><span>GitHub Repo</span><input id="site-github-repo" type="text" placeholder="owner/repo"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>브랜드 / CTA</h3>
+            <div class="form-grid">
+              <label class="field" for="brand-prefix"><span>브랜드 앞말</span><input id="brand-prefix" type="text" placeholder="studio"></label>
+              <label class="field" for="brand-name"><span>브랜드 이름</span><input id="brand-name" type="text" placeholder="jinyeong"></label>
+              <label class="field" for="nav-cta-label"><span>상단 CTA 라벨</span><input id="nav-cta-label" type="text"></label>
+              <label class="field" for="nav-cta-href"><span>상단 CTA 링크</span><input id="nav-cta-href" type="text" placeholder="contact.html"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>내비 링크</h3>
+              <button id="add-nav-link" type="button">링크 추가</button>
+            </div>
+            <div class="managed-list" id="nav-link-list"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="panel-hero" data-panel="hero">
+          <div class="panel-head">
+            <div>
+              <h2>히어로</h2>
+              <p>배경 영상, 헤드라인, 소개 문구, 상태 배지와 CTA를 설정합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <h3>히어로 기본 정보</h3>
+            <div class="form-grid">
+              <label class="field span-2" for="hero-video-url"><span>배경 영상 URL</span><input id="hero-video-url" type="text"></label>
+              <label class="field" for="hero-eyebrow"><span>Eyebrow</span><input id="hero-eyebrow" type="text"></label>
+              <label class="field" for="hero-title"><span>제목</span><input id="hero-title" type="text"></label>
+              <label class="field" for="hero-title-accent"><span>강조 단어</span><input id="hero-title-accent" type="text"></label>
+              <label class="field span-2" for="hero-description"><span>설명</span><textarea id="hero-description" rows="4"></textarea></label>
+              <label class="field" for="hero-status-label"><span>상태 라벨</span><input id="hero-status-label" type="text"></label>
+              <label class="field" for="hero-status-text"><span>상태 문구</span><input id="hero-status-text" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>히어로 액션</h3>
+              <button id="add-hero-action" type="button">액션 추가</button>
+            </div>
+            <div class="managed-list" id="hero-action-list"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="panel-projects" data-panel="projects">
+          <div class="panel-head">
+            <div>
+              <h2>프로젝트</h2>
+              <p>프로젝트 섹션 헤더와 카드형 작업물을 순서대로 관리합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <h3>섹션 헤더</h3>
+            <div class="form-grid">
+              <label class="field" for="projects-eyebrow"><span>Eyebrow</span><input id="projects-eyebrow" type="text"></label>
+              <label class="field" for="projects-meta"><span>오른쪽 메타</span><input id="projects-meta" type="text"></label>
+              <label class="field span-2" for="projects-title"><span>섹션 제목</span><input id="projects-title" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>프로젝트 카드</h3>
+              <button id="add-project-card" type="button">카드 추가</button>
+            </div>
+            <div class="managed-list" id="project-card-list"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel on" id="panel-works" data-panel="works">
+          <div class="panel-head">
+            <div>
+              <h2>영상 추가</h2>
+              <p>링크에서 영상 ID와 타입을 확인하고, 제목과 채널명은 자동으로 채운 뒤 필요한 값만 보정합니다.</p>
+            </div>
+          </div>
+
+          <form class="editor-card detail-section video-form" id="works-video-form">
+            <div class="form-grid">
+              <label class="field span-2" for="works-video-url"><span>YouTube 링크</span><input id="works-video-url" type="text" placeholder="https://youtu.be/... 또는 https://www.youtube.com/shorts/..."></label>
+              <div class="url-actions span-2">
+                <span id="works-video-url-hint">링크를 입력하면 작성칸이 열립니다.</span>
+              </div>
+              <div class="video-fields span-2" id="works-video-fields" hidden>
+                <label class="field" for="works-video-title"><span>영상 제목</span><input id="works-video-title" type="text" placeholder="영상 제목"></label>
+                <label class="field" for="works-video-date"><span>업로드 날짜</span><input id="works-video-date" type="date"></label>
+                <label class="field" for="works-video-category"><span>채널 / 카테고리</span>
+                  <select id="works-video-category"></select>
+                </label>
+                <label class="field" for="works-video-type"><span>타입</span>
+                  <select id="works-video-type">
+                    <option value="long">롱폼</option>
+                    <option value="short">숏폼</option>
+                  </select>
+                </label>
+                <label class="field span-2 new-category-field" id="works-new-category-field" for="works-new-category-name" hidden>
+                  <span>새 카테고리 이름</span>
+                  <input id="works-new-category-name" type="text" placeholder="처음 등록할 채널명">
+                </label>
+              </div>
+            </div>
+            <div class="form-footer" id="works-video-form-footer" hidden>
+              <div class="video-preview" id="works-new-video-preview" hidden></div>
+              <button class="primary-action" id="works-video-submit" type="submit" hidden>영상 추가</button>
+            </div>
+            <p id="works-video-url-feedback" class="field-note works-url-feedback">링크를 입력하면 영상 정보를 확인합니다.</p>
+          </form>
+
+          <div class="panel-head compact">
+            <div>
+              <h2>등록된 영상</h2>
+              <p>카드에서 바로 수정하면 JSON 미리보기와 라이브 프리뷰에 즉시 반영됩니다.</p>
+            </div>
+            <div class="list-tools">
+              <label class="field compact-field" for="works-video-search">
+                <span>검색</span>
+                <input id="works-video-search" type="search" placeholder="제목 또는 카테고리">
+              </label>
+              <label class="field compact-field" for="works-video-filter">
+                <span>타입</span>
+                <select id="works-video-filter">
+                  <option value="all">전체</option>
+                  <option value="long">롱폼</option>
+                  <option value="short">숏폼</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="video-grid" id="works-video-list"></div>
+        </section>
+
+        <section class="tab-panel" id="panel-stats-process" data-panel="stats-process">
+          <div class="panel-head">
+            <div>
+              <h2>통계 / 프로세스</h2>
+              <p>숫자형 통계와 가격 섹션 하단 프로세스 단계를 설정합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>통계 아이템</h3>
+              <button id="add-stat-item" type="button">통계 추가</button>
+            </div>
+            <div class="managed-list" id="stats-item-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>프로세스 제목</h3>
+            <div class="form-grid">
+              <label class="field span-2" for="pricing-process-title"><span>제목</span><input id="pricing-process-title" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>프로세스 단계</h3>
+              <button id="add-process-step" type="button">단계 추가</button>
+            </div>
+            <div class="managed-list" id="process-step-list"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="panel-pricing" data-panel="pricing">
+          <div class="panel-head">
+            <div>
+              <h2>가격 / 커스텀</h2>
+              <p>가격 섹션 소개 문구, 플랜 카드, 커스텀 작업 블록을 관리합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <h3>가격 섹션 헤더</h3>
+            <div class="form-grid">
+              <label class="field" for="pricing-eyebrow"><span>Eyebrow</span><input id="pricing-eyebrow" type="text"></label>
+              <label class="field span-2" for="pricing-title"><span>제목</span><input id="pricing-title" type="text"></label>
+              <label class="field span-2" for="pricing-description"><span>설명</span><textarea id="pricing-description" rows="4"></textarea></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>가격 플랜</h3>
+              <button id="add-pricing-plan" type="button">플랜 추가</button>
+            </div>
+            <div class="managed-list" id="pricing-plan-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>커스텀 작업 블록</h3>
+            <div class="form-grid">
+              <label class="field" for="custom-eyebrow"><span>이미지 Eyebrow</span><input id="custom-eyebrow" type="text"></label>
+              <label class="field" for="custom-highlight"><span>강조 문구</span><input id="custom-highlight" type="text"></label>
+              <label class="field span-2" for="custom-title"><span>제목</span><input id="custom-title" type="text"></label>
+              <label class="field span-2" for="custom-description"><span>설명</span><textarea id="custom-description" rows="4"></textarea></label>
+              <label class="field span-2" for="custom-caption"><span>이미지 캡션</span><input id="custom-caption" type="text"></label>
+              <label class="field span-2" for="custom-image-url"><span>이미지 URL</span><input id="custom-image-url" type="text"></label>
+              <label class="field span-2" for="custom-image-alt"><span>이미지 대체 텍스트</span><input id="custom-image-alt" type="text"></label>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="panel-contact-footer" data-panel="contact-footer">
+          <div class="panel-head">
+            <div>
+              <h2>문의 / 푸터</h2>
+              <p>문의 섹션 타이틀, 핵심 연락 카드, 상세 정보, 푸터와 자유 작성 영역을 관리합니다.</p>
+            </div>
+          </div>
+
+          <section class="editor-card detail-section">
+            <h3>문의 섹션</h3>
+            <div class="form-grid">
+              <label class="field" for="contact-eyebrow"><span>Eyebrow</span><input id="contact-eyebrow" type="text"></label>
+              <label class="field span-2" for="contact-title"><span>제목</span><input id="contact-title" type="text"></label>
+              <label class="field" for="contact-title-accent"><span>강조 단어</span><input id="contact-title-accent" type="text"></label>
+              <label class="field span-2" for="contact-description"><span>설명</span><textarea id="contact-description" rows="4"></textarea></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>핵심 연락 카드</h3>
+            <div class="form-grid">
+              <label class="field" for="contact-card-label"><span>라벨</span><input id="contact-card-label" type="text"></label>
+              <label class="field" for="contact-card-value"><span>값</span><input id="contact-card-value" type="text"></label>
+              <label class="field" for="contact-card-icon"><span>아이콘 이름</span><input id="contact-card-icon" type="text" placeholder="chat"></label>
+              <label class="field" for="contact-card-href"><span>링크</span><input id="contact-card-href" type="text" placeholder="https://... 또는 비워두기"></label>
+              <label class="field span-2" for="contact-card-note"><span>안내 문구</span><input id="contact-card-note" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>문의 상세 정보</h3>
+              <button id="add-contact-detail" type="button">행 추가</button>
+            </div>
+            <div class="managed-list" id="contact-detail-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>푸터</h3>
+            <div class="form-grid">
+              <label class="field" for="footer-title"><span>푸터 제목</span><input id="footer-title" type="text"></label>
+              <label class="field" for="footer-copy"><span>저작권 문구</span><input id="footer-copy" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>푸터 링크</h3>
+              <button id="add-footer-link" type="button">링크 추가</button>
+            </div>
+            <div class="managed-list" id="footer-link-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>자유 작성 영역</h3>
+            <label class="field" for="free-content-input">
+              <span>본문</span>
+              <textarea id="free-content-input" rows="6" placeholder="푸터 위에 표시할 자유 문구를 입력하세요."></textarea>
+            </label>
+            <p class="field-note">비워두면 공개 페이지에서는 숨겨집니다.</p>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="panel-json" data-panel="json">
+          <div class="panel-head">
+            <div>
+              <h2>JSON 확인</h2>
+              <p>검토가 끝나면 복사해서 새 레포의 <code>data/site.json</code>에 붙여 넣으세요.</p>
+            </div>
+            <button class="primary-action" id="copy-json-panel" type="button">복사하기</button>
+          </div>
+          <textarea id="json-output" class="json-output" spellcheck="false" aria-label="완성된 JSON"></textarea>
+        </section>
+      </main>
+    </div>
+
+    <section class="floating-actions" aria-label="빠른 JSON 작업">
+      <div class="floating-extra-actions" id="floating-extra-actions">
+        <button id="open-github-json" type="button">GitHub site.json 열기</button>
+        <button id="reload-json" type="button">초기 JSON 다시 불러오기</button>
+        <button id="validate-json" type="button">JSON 유효성 확인</button>
+      </div>
+      <button class="primary-action" id="copy-all-json" type="button">복사하기</button>
+      <button class="floating-toggle" id="floating-actions-toggle" type="button" aria-expanded="false" aria-controls="floating-extra-actions" aria-label="JSON 작업 더 보기">
+        <span aria-hidden="true">&gt;</span>
+      </button>
+    </section>
+  </div>
+
+  <script src="admin.js?v=20260421-3"></script>
+</body>
+</html>
