@@ -155,7 +155,7 @@
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
     .contact-details-grid {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: minmax(0, 1fr);
     }
     .footer-links {
       grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
@@ -609,6 +609,18 @@
       line-height: 1.25;
       overflow-wrap: anywhere;
     }
+    @media (min-width: 768px) {
+      .contact-details-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .contact-details-grid[data-count="1"] {
+        grid-template-columns: minmax(0, min(100%, 20rem));
+        justify-content: center;
+      }
+      .contact-details-grid[data-count="2"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
     @media (min-width: 768px) and (max-width: 1023px) {
       .works-grid[data-columns="3"],
       .works-grid[data-columns="4"],
@@ -817,6 +829,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=20260422-5"></script>
+  <script src="script.js?v=20260422-6"></script>
 </body>
 </html>

@@ -163,6 +163,7 @@ const DEFAULT_DATA = {
     plans: [
       {
         slug: "starter",
+        design: "shortform",
         badge: "Template Example",
         icon: "movie_edit",
         title: "기본 포트폴리오 편집",
@@ -381,6 +382,19 @@ const HERO_TOOL_PRESETS = Object.freeze({
     name: "Firefly",
     logoUrl: "https://i.namu.wiki/i/jG0lHgs5mA8zq6QEO9Yafbdoh7EFqbMgTDqxOOtfTZ7vMfa1kcD8g59slnrOPkOYyqUQRnqqD0-gy4Py_RH_Pg.svg",
     logoAlt: "Firefly logo",
+  },
+});
+
+const HERO_BGM_PRESETS = Object.freeze({
+  artlist: {
+    name: "Artlist",
+    logoUrl: "https://search.pstatic.net/sunny?src=https%3A%2F%2Fartlist.io%2Ffavicon.ico%3Fv%3D1&type=f30_30_png_expire24",
+    logoAlt: "Artlist logo",
+  },
+  mewpot: {
+    name: "뮤팟",
+    logoUrl: "https://i.namu.wiki/i/NCLySXrh5IA5yfffX9NXuDHPdPOedGwH0XK_B1aZx6V9PfvSZrCeQDIGypbA5pnPRZ3jYBt1XGYABSClWrd8TyP0R58AtCX38RE8AJFa0uY4sErYNdcqarurH13Y26UzZTsa9mWLTfMEfHAns5iX4g.webp",
+    logoAlt: "뮤팟 logo",
   },
 });
 
@@ -688,6 +702,12 @@ function normalizeWorksSingleColumnSize(value) {
   return ["large", "medium", "small"].includes(String(value || "").trim())
     ? String(value).trim()
     : "medium";
+}
+
+function normalizePricingPlanDesign(value, fallback = "shortform") {
+  const normalized = String(value || "").trim();
+  if (normalized === "longform" || normalized === "shortform") return normalized;
+  return fallback === "longform" ? "longform" : "shortform";
 }
 
 function normalizeWorksCategoryOrder(items, videos) {
@@ -1163,6 +1183,7 @@ function normalizeData(input) {
       plans: Array.isArray(source.pricing?.plans)
         ? source.pricing.plans.map((plan) => ({
             slug: String(plan?.slug || "").trim(),
+            design: normalizePricingPlanDesign(plan?.design, String(plan?.slug || "").trim() === "long" ? "longform" : "shortform"),
             badge: String(plan?.badge || "").trim(),
             icon: String(plan?.icon || "").trim(),
             title: String(plan?.title || "").trim(),
@@ -1684,7 +1705,7 @@ function renderPreviewPlanCards() {
   }
 
   return plans.map((plan) => {
-    const highlighted = plan.slug === "long";
+    const highlighted = normalizePricingPlanDesign(plan.design, String(plan.slug || "").trim() === "long" ? "longform" : "shortform") === "longform";
     return `
       <article class="${highlighted ? "relative overflow-hidden border-t-4 border-[#fde047] bg-[#2d2a1f]" : "bg-[#1e1c12]"} rounded-2xl p-8">
         ${plan.badge ? `<div class="${highlighted ? "absolute right-0 top-0 p-4" : "mb-8"}"><span class="${highlighted ? "bg-[#fde047] px-2 py-1 text-[0.625rem] font-black uppercase tracking-tight text-[#211b00]" : "text-[0.6875rem] font-bold uppercase tracking-widest text-[#97917a]"}">${escapeHTML(plan.badge)}</span></div>` : ""}
@@ -1939,6 +1960,11 @@ function buildPricingPreview() {
 function buildContactFooterPreview() {
   const details = state.data.contact.details.filter((detail) => detail.label || detail.value);
   const footerEnabled = state.data.site.footer.enabled !== false;
+  const detailGridClass = details.length <= 1
+    ? "md:grid-cols-1"
+    : details.length === 2
+      ? "md:grid-cols-2"
+      : "md:grid-cols-3";
 
   return `
     <section class="preview-render-root bg-[#16130a] text-[#e9e2d2]" style="font-family:'Epilogue', sans-serif;">
@@ -1964,7 +1990,7 @@ function buildContactFooterPreview() {
               </div>
             </div>
 
-            <div class="mx-auto mt-16 grid max-w-3xl gap-6 opacity-80 md:grid-cols-3">
+            <div class="mx-auto mt-16 grid max-w-3xl gap-6 opacity-80 ${detailGridClass}">
               ${details.length
                 ? details.map((detail) => `
                     <div class="flex flex-col items-center">
@@ -2280,10 +2306,19 @@ function renderHeroToolPresetButtons() {
   `).join("");
 }
 
+function renderHeroBgmPresetButtons() {
+  const container = $("#hero-bgm-presets");
+  if (!container) return;
+  container.innerHTML = Object.entries(HERO_BGM_PRESETS).map(([key, preset]) => `
+    <button type="button" data-hero-bgm-preset="${escapeHTML(key)}">${escapeHTML(preset.name)}</button>
+  `).join("");
+}
+
 function renderHeroInfoEditors() {
   syncHeroInfoLayoutState();
   syncHeroCareerModeState();
   renderHeroToolPresetButtons();
+  renderHeroBgmPresetButtons();
   renderHeroCareerStructuredList();
   renderHeroCareerSimpleList();
   renderHeroResourceEditorList(
@@ -2300,10 +2335,18 @@ function renderHeroInfoEditors() {
   );
 }
 
-function findHeroToolIndexByName(name) {
+function findHeroResourceIndexByName(items, name) {
   const normalizedName = String(name || "").trim().toLowerCase();
   if (!normalizedName) return -1;
-  return (state.data.hero.infoPanels?.tools?.items || []).findIndex((item) => String(item?.name || "").trim().toLowerCase() === normalizedName);
+  return (Array.isArray(items) ? items : []).findIndex((item) => String(item?.name || "").trim().toLowerCase() === normalizedName);
+}
+
+function findHeroToolIndexByName(name) {
+  return findHeroResourceIndexByName(state.data.hero.infoPanels?.tools?.items || [], name);
+}
+
+function findHeroBgmIndexByName(name) {
+  return findHeroResourceIndexByName(state.data.hero.infoPanels?.bgm?.items || [], name);
 }
 
 function addHeroToolPreset(presetKey) {
@@ -2324,6 +2367,26 @@ function addHeroToolPreset(presetKey) {
     logoAlt: preset.logoAlt,
   });
   applyDataChange(`${preset.name} 기본 툴을 추가했습니다.`);
+}
+
+function addHeroBgmPreset(presetKey) {
+  const preset = HERO_BGM_PRESETS[presetKey];
+  if (!preset) {
+    setStatus("알 수 없는 BGM 툴 프리셋입니다.", "error");
+    return;
+  }
+
+  if (findHeroBgmIndexByName(preset.name) !== -1) {
+    setStatus(`${preset.name}는 이미 등록되어 있습니다.`, "info");
+    return;
+  }
+
+  state.data.hero.infoPanels.bgm.items.push({
+    name: preset.name,
+    logoUrl: preset.logoUrl,
+    logoAlt: preset.logoAlt,
+  });
+  applyDataChange(`${preset.name} BGM 툴을 추가했습니다.`);
 }
 
 function renderProjectCardList() {
@@ -2657,6 +2720,13 @@ function renderPricingPlanList() {
         <label class="field">
           <span>가격</span>
           <input type="text" value="${escapeHTML(plan.price)}" data-plan-field="price">
+        </label>
+        <label class="field">
+          <span>카드 디자인</span>
+          <select data-plan-field="design">
+            <option value="shortform" ${normalizePricingPlanDesign(plan.design, "shortform") === "shortform" ? "selected" : ""}>숏폼 스타일</option>
+            <option value="longform" ${normalizePricingPlanDesign(plan.design, "shortform") === "longform" ? "selected" : ""}>롱폼 스타일</option>
+          </select>
         </label>
         <label class="field span-2">
           <span>제목</span>
@@ -3142,6 +3212,12 @@ function bindEvents() {
     addHeroToolPreset(button.dataset.heroToolPreset);
   });
 
+  $("#hero-bgm-presets")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-hero-bgm-preset]");
+    if (!button) return;
+    addHeroBgmPreset(button.dataset.heroBgmPreset);
+  });
+
   $("#hero-tools-list")?.addEventListener("input", (event) => {
     const row = event.target.closest("[data-hero-tools-index]");
     const field = event.target.dataset.heroToolsField;
@@ -3399,6 +3475,7 @@ function bindEvents() {
   $("#add-pricing-plan")?.addEventListener("click", () => {
     state.data.pricing.plans.push({
       slug: "",
+      design: "shortform",
       badge: "",
       icon: "",
       title: "",
@@ -3427,7 +3504,7 @@ function bindEvents() {
     applyDataChange("커스텀 작업 블록을 추가했습니다.");
   });
 
-  $("#pricing-plan-list")?.addEventListener("input", (event) => {
+  const handlePricingPlanFieldChange = (event) => {
     const planCard = event.target.closest("[data-plan-index]");
     if (!planCard) return;
     const planIndex = Number(planCard.dataset.planIndex);
@@ -3436,7 +3513,9 @@ function bindEvents() {
 
     const planField = event.target.dataset.planField;
     if (planField) {
-      plan[planField] = event.target.value;
+      plan[planField] = planField === "design"
+        ? normalizePricingPlanDesign(event.target.value, "shortform")
+        : event.target.value;
       applyMinorChange("가격 플랜이 반영되었습니다.");
       return;
     }
@@ -3454,6 +3533,12 @@ function bindEvents() {
     const featureIndex = Number(featureRow.dataset.featureIndex);
     plan.features[featureIndex] = event.target.value;
     applyMinorChange("플랜 포함 항목이 반영되었습니다.");
+  };
+
+  $("#pricing-plan-list")?.addEventListener("input", handlePricingPlanFieldChange);
+  $("#pricing-plan-list")?.addEventListener("change", (event) => {
+    if (!event.target.matches('select[data-plan-field="design"]')) return;
+    handlePricingPlanFieldChange(event);
   });
 
   $("#custom-work-list")?.addEventListener("input", (event) => {

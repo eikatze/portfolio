@@ -103,6 +103,7 @@ const DEFAULT_DATA = {
     plans: [
       {
         slug: "starter",
+        design: "shortform",
         badge: "Template Example",
         icon: "movie_edit",
         title: "기본 포트폴리오 편집",
@@ -245,6 +246,12 @@ function normalizeWorksSingleColumnSize(value) {
   return ["large", "medium", "small"].includes(String(value || "").trim())
     ? String(value).trim()
     : "medium";
+}
+
+function normalizePricingPlanDesign(value, fallback = "shortform") {
+  const normalized = String(value || "").trim();
+  if (normalized === "longform" || normalized === "shortform") return normalized;
+  return fallback === "longform" ? "longform" : "shortform";
 }
 
 function normalizeWorksCategoryOrder(items, videos) {
@@ -586,6 +593,7 @@ function normalizeData(input) {
       plans: Array.isArray(source.pricing?.plans)
         ? source.pricing.plans.map((plan) => ({
             slug: String(plan?.slug || "").trim(),
+            design: normalizePricingPlanDesign(plan?.design, String(plan?.slug || "").trim() === "long" ? "longform" : "shortform"),
             badge: String(plan?.badge || "").trim(),
             icon: String(plan?.icon || "").trim(),
             title: String(plan?.title || "").trim(),
@@ -1096,7 +1104,10 @@ function renderHero() {
   if (title) {
     title.innerHTML = renderAccentText(DATA.hero.title, DATA.hero.titleAccent, "text-[#FDE047]");
   }
-  setText("hero-description", DATA.hero.description);
+  const description = $("#hero-description");
+  if (description) {
+    description.innerHTML = escapeWithBreaks(DATA.hero.description);
+  }
   setText("hero-status-label", DATA.hero.statusLabel);
   setText("hero-status-text", DATA.hero.statusText);
   setHidden($("#hero-status"), !(DATA.hero.statusLabel || DATA.hero.statusText));
@@ -1535,10 +1546,10 @@ function renderPricing() {
     plans.innerHTML = DATA.pricing.plans.map((plan) => {
       const href = resolvePreviewAwareHref(plan.cta?.href);
       const external = isExternalHref(href) ? ' target="_blank" rel="noopener"' : "";
-      const highlighted = plan.slug === "long";
+      const highlighted = normalizePricingPlanDesign(plan.design, String(plan.slug || "").trim() === "long" ? "longform" : "shortform") === "longform";
       const buttonClass = highlighted
-        ? "w-full rounded-lg bg-primary-container py-4 font-black text-on-primary-container transition-all duration-300 hover:bg-primary-fixed-dim"
-        : "w-full rounded-lg border border-outline-variant bg-transparent py-4 font-bold text-on-surface transition-all duration-300 hover:border-primary-container hover:bg-primary-container hover:text-on-primary-container";
+        ? "inline-flex w-full items-center justify-center rounded-lg bg-primary-container px-6 py-4 font-black text-on-primary-container transition-all duration-300 hover:bg-primary-fixed-dim"
+        : "inline-flex w-full items-center justify-center rounded-lg border border-outline-variant bg-transparent px-6 py-4 font-bold text-on-surface transition-all duration-300 hover:border-primary-container hover:bg-primary-container hover:text-on-primary-container";
 
       return `
         <article class="plan-card ${highlighted ? "highlighted border-primary-container bg-surface-container-high relative overflow-hidden p-10" : "bg-surface-container-low p-10"}">
@@ -1628,8 +1639,14 @@ function renderContact() {
 
   const details = $("#contact-details");
   if (details) {
-    details.innerHTML = DATA.contact.details
-      .filter((detail) => detail.label || detail.value)
+    const items = DATA.contact.details.filter((detail) => detail.label || detail.value);
+    if (items.length === 1 || items.length === 2) {
+      details.dataset.count = String(items.length);
+    } else {
+      delete details.dataset.count;
+    }
+
+    details.innerHTML = items
       .map((detail) => `
         <div class="flex flex-col items-center">
           <p class="mb-1 text-xs uppercase tracking-widest text-outline">${escapeHTML(detail.label)}</p>

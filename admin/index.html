@@ -156,9 +156,17 @@
                 <span class="field-note">직접 영상 URL과 YouTube watch/share/short 링크, 11자리 YouTube ID를 모두 사용할 수 있습니다.</span>
               </label>
               <label class="field" for="hero-eyebrow"><span>Eyebrow</span><input id="hero-eyebrow" type="text"></label>
-              <label class="field" for="hero-title"><span>제목</span><input id="hero-title" type="text"></label>
+              <label class="field span-2" for="hero-title">
+                <span>제목</span>
+                <textarea id="hero-title" rows="3" placeholder="줄바꿈이 필요한 경우 Enter로 나눠 입력하세요."></textarea>
+                <span class="field-note">줄바꿈이 공개 페이지 제목에도 그대로 반영됩니다.</span>
+              </label>
               <label class="field" for="hero-title-accent"><span>강조 단어</span><input id="hero-title-accent" type="text"></label>
-              <label class="field span-2" for="hero-description"><span>설명</span><textarea id="hero-description" rows="4"></textarea></label>
+              <label class="field span-2" for="hero-description">
+                <span>설명</span>
+                <textarea id="hero-description" rows="4"></textarea>
+                <span class="field-note">설명도 줄바꿈이 공개 페이지에 그대로 반영됩니다.</span>
+              </label>
               <label class="field" for="hero-status-label"><span>상태 라벨</span><input id="hero-status-label" type="text"></label>
               <label class="field" for="hero-status-text"><span>상태 문구</span><input id="hero-status-text" type="text"></label>
             </div>
@@ -299,6 +307,7 @@
               </div>
               <button id="add-hero-bgm" type="button">툴 추가</button>
             </div>
+            <div class="preset-chip-list" id="hero-bgm-presets" aria-label="BGM 사용 툴 빠른 추가"></div>
             <div class="managed-list" id="hero-bgm-list"></div>
           </section>
         </section>
@@ -376,6 +385,10 @@
                       <option value="2">2개</option>
                       <option value="3">3개</option>
                       <option value="4">4개</option>
+                      <option value="5">5개</option>
+                      <option value="6">6개</option>
+                      <option value="7">7개</option>
+                      <option value="8">8개</option>
                     </select>
                   </label>
                 </div>
@@ -680,6 +693,6 @@
     </section>
   </div>
 
-  <script src="admin.js?v=20260422-5"></script>
+  <script src="admin.js?v=20260422-6"></script>
 </body>
 </html>
